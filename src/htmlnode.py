@@ -9,6 +9,14 @@ class HTMLNode():
     def __repr__(self):
         return f"HtmlNode({self.tag}, {self.value}, {self.children}, {self.props})"
 
+    def __eq__(self, obj):
+        return (
+            self.tag == obj.tag and
+            self.value == obj.value and
+            self.children == obj.children and
+            self.props == obj.props
+        )
+
     def to_html(self):
         raise NotImplementedError()
 
@@ -18,3 +26,5 @@ class HTMLNode():
         s = ""
         for p in self.props:
             s += f' {p}="{self.props[p]}"'
+
+        return s
