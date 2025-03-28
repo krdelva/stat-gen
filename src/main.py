@@ -22,4 +22,12 @@ def main():
         ],)
     print("PARENT NODE")
     print(parent_node.to_html())
+
+    text_to_html_node = TextNode("This is a text node", TextType.TEXT)
+    print("TEXT TO HTML")
+    print(text_to_html_node.text_node_to_html_node())
+
+    link_to_html_node = TextNode("This is a link node", TextType.LINK, "www.bob.com")
+    print("LINK TO HTML")
+    print(link_to_html_node.text_node_to_html_node())
 main()
