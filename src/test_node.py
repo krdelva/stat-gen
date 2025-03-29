@@ -40,5 +40,27 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(html_node.value, "This is a link node")
         self.assertEqual(html_node.props, {"href": "www.google.com"})
 
+    def test_split_nodes(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        #node.split_nodes_delimiter("`", TextType.CODE)
+        self.assertEqual(node.split_nodes_delimiter("`", TextType.CODE),
+            [
+                TextNode("This is text with a ", TextType.TEXT, None),
+                TextNode("code block", TextType.CODE, None),
+                TextNode(" word", TextType.TEXT, None),
+            ]
+        )
+
+    def test_split_nodes_bold(self):
+        node = TextNode("This is text with a **bolded phrase** in the middle", TextType.TEXT)
+        self.assertEqual(node.split_nodes_delimiter("**", TextType.BOLD),
+            [
+                TextNode("This is text with a ", TextType.TEXT),
+                TextNode("bolded phrase", TextType.BOLD),
+                TextNode(" in the middle", TextType.TEXT),
+            ]
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
