@@ -39,13 +39,3 @@ class TextNode():
                 return  LeafNode(self.text_type.value, "", {"src": self.url, "alt": self.text})
             case _:
                 raise ValueError("no matching case")
-
-    def split_nodes_delimiter(self, delimiter, text_type):
-        l = len(delimiter)
-        result = []
-        d = self.text.find(delimiter)
-        result.append(TextNode(self.text[:d], TextType.TEXT))
-        e = self.text[d+l:].find(delimiter)
-        result.append(TextNode(self.text[d+l:d+e+l], text_type))
-        result.append(TextNode(self.text[d+e+l+l:], TextType.TEXT))
-        return result
