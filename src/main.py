@@ -1,5 +1,6 @@
 from textnode import TextNode, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from internal_functions import markdown_to_blocks
 
 def main():
     print("hello world")
@@ -30,4 +31,16 @@ def main():
     link_to_html_node = TextNode("This is a link node", TextType.LINK, "www.bob.com")
     print("LINK TO HTML")
     print(link_to_html_node.text_node_to_html_node())
+
+    print("MARKDOWN TEST:")
+    markdown_to_blocks("""
+    This is **bolded** paragraph
+
+    This is another paragraph with _italic_ text and `code` here
+    This is the same paragraph on a new line
+
+    - This is a list
+    - with items
+    """)
+
 main()
