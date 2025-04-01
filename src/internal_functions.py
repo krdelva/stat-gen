@@ -1,5 +1,6 @@
 import re
 
+from enum import Enum
 from textnode import TextType, TextNode
 
 def extract_markdown_images(text):
@@ -96,3 +97,34 @@ def markdown_to_blocks(markdown):
         result[i] = t
         i += 1
     return result
+
+
+class BlockType(Enum):
+    PARAGRAPH = ""
+    HEADING = "#"
+    CODE = "```"
+    QUOTE = ">"
+    UNORDERED_LIST = "-"
+    ORDERED_LIST = "."
+
+def block_to_block_type(block):
+    lines = block.split('\n')
+    if len(lines) >= 2 and lines[0] == '```' and lines[-1] == '```':
+        return BlockType.CODE
+    if len(lines) == 1 and re.match(r'^#{1,6} .+', lines[0]):
+        return BlockType.HEADING
+    if all(line.startswith('>') for line in lines):
+        return BlockType.QUOTE
+    if all(line.startswith('- ') for line in lines):
+        return BlockType.UNORDERED_LIST
+    is_ordered = True
+    expected_num = 1
+    for line in lines:
+        match = re.match(r'^(\d+)\. ', line)
+        if not match or int(match.group(1)) != expected_num:
+            is_ordered = False
+            break
+        expected_num += 1
+    if is_ordered and lines:
+        return BlockType.ORDERED_LIST
+    return BlockType.PARAGRAPH
