@@ -1,19 +1,26 @@
 import os
 import shutil
+import sys
 from internal_functions import generate_pages_recursive
 
 def main():
-    """Generate the static site."""
-    # Clear the public directory
-    public_dir = 'public'
-    if os.path.exists(public_dir):
-        shutil.rmtree(public_dir)
+    # Get base_path from CLI argument, default to "/"
+    base_path = sys.argv[1] if len(sys.argv) > 1 else "/"
+    if not base_path.endswith('/'):
+        base_path += '/'
 
-    # Copy static files from 'static' to 'public'
-    shutil.copytree('static', public_dir)
+    # Set destination directory to 'docs' for GitHub Pages
+    dest_dir = 'docs'
 
-    # Generate all pages recursively
-    generate_pages_recursive('content', 'template.html', public_dir)
+    # Clear the destination directory
+    if os.path.exists(dest_dir):
+        shutil.rmtree(dest_dir)
+
+    # Copy static files from 'static' to 'docs'
+    shutil.copytree('static', dest_dir)
+
+    # Generate all pages with the base_path
+    generate_pages_recursive('content', 'template.html', dest_dir, base_path)
 
 if __name__ == "__main__":
     main()

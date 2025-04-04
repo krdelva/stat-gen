@@ -231,14 +231,12 @@ def extract_title(markdown):
     raise ValueError("No h1 header found in markdown")
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, base_path="/"):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
-    # Read the markdown file
+    # Read markdown and template files
     with open(from_path, 'r') as f:
         markdown = f.read()
-
-    # Read the template file
     with open(template_path, 'r') as f:
         template = f.read()
 
@@ -246,29 +244,27 @@ def generate_page(from_path, template_path, dest_path):
     html_node = markdown_to_html_node(markdown)
     html_content = html_node.to_html()
 
-    # Extract the title
+    # Extract title
     title = extract_title(markdown)
 
-    # Replace placeholders in the template
+    # Replace placeholders
     final_html = template.replace('{{ Title }}', title).replace('{{ Content }}', html_content)
+    # Adjust URLs with base_path
+    final_html = final_html.replace('href="/', f'href="{base_path}').replace('src="/', f'src="{base_path}')
 
-    # Create destination directory if it doesn’t exist
+    # Create destination directory if needed
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
-    # Write the final HTML to the destination
+    # Write the HTML file
     with open(dest_path, 'w') as f:
         f.write(final_html)
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
-    """Recursively generate HTML pages from markdown files in the content directory."""
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, base_path="/"):
+    # Recursively generate HTML pages from markdown files in the content directory.
     for root, dirs, files in os.walk(dir_path_content):
         for file in files:
             if file.endswith('.md'):
-                # Source markdown file path
                 from_path = os.path.join(root, file)
-                # Relative path from content directory
                 rel_path = os.path.relpath(from_path, dir_path_content)
-                # Destination HTML file path (replace .md with .html)
                 dest_path = os.path.join(dest_dir_path, os.path.splitext(rel_path)[0] + '.html')
-                # Generate the page
-                generate_page(from_path, template_path, dest_path)
+                generate_page(from_path, template_path, dest_path, base_path)
